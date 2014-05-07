@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>iOS WebView Test</title>
+        <style>
+            body {
+                font-family: sans-serif;
+                background-color: #eee;
+            }
+        
+        button {
+            height: 40px;
+            margin-top: 15px;
+        }
+        </style>
+    </head>
+    <body>
+        <h2>Webview Content</h2>
+            <label for="commandName">Command:</label>
+            <input type="text" id="commandName" value="getContacts"><br>
+            <label for="value1">Value 1:</label>
+            <input type="text" id="value1"><br>
+            <label for="value2">Value 2:</label>
+            <input type="text" id="value2"><br>
+            <button id="updateNativeBtn">Exceute on Native</button>
+            <hr>
+            <button class="executeCommand" data-commandname="getContacts">Get Contacts</button>
+            <div id="fromNative"></div>   
+    </body>
+    <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.11.0/jquery.min.js"></script>
+    <script>
+        $(function(){
+            $('.executeCommand').on('click', function(e){
+                console.log($(this));
+                var commandName = $(this).data('commandname');
+                var args = {};
+                console.log(commandName);
+                window.location = 'tjbridge:' + commandName + ':' + encodeURIComponent(JSON.stringify(args));
+            });
+          $('#updateNativeBtn').on('click', function(e){
+
+             var commandName = $('#commandName').val();
+             var args = {
+                'value1': $('#value1').val(),
+                'value2': $('#value2').val()
+             }
+             window.location = 'tjbridge:' + commandName + ':' + encodeURIComponent(JSON.stringify(args));
+          })
+
+          window.executeCommand = function(payload){
+            var commandName = payload.commandName;
+            if (commandName == "getContacts"){
+                $.each(payload.contacts, function(x, contact){
+                     $('#fromNative').html($('#fromNative').html() + "\n" + contact);
+                });
+            }
+           
+          }
+        });
+        </script>
+</html>
